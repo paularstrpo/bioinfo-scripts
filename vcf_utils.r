@@ -87,3 +87,21 @@ summarise.mutations <- function(somatic_mutations){
 
     return(mutation_summary)
 }
+
+parse.topiary.neoantigens <- function(path, sample_sheet){
+    # your sample sheet should have a file_name column with the name of the topiary output
+    # filenames matched to sample ID.
+    
+    library(tidyverse)
+    epitope_list <- lapply(sample_sheet$file_name, read_csv)
+    names(epitope_list) <- sample_sheet$sample_id
+
+    epitope_df <- bind_rows(lapply(names(epitope_list), function(x){
+        epitope.df <- epitope_list[[x]] %>%
+        mutate(sample=x,
+               variant=factor(gsub(x=gsub(x=variant, pattern="chr", replacement=''), pattern=' g.', replacement=':', fixed=TRUE)),
+               combo=as.factor(paste(sample, variant, sep='_'))) ## this is what we merge on!!
+    })) %>% inner_join(sample_sheet, by=c('sample_id'))
+    
+    return(epitope_df)
+}
