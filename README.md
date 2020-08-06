@@ -1,2 +1,3 @@
 # bioinfo-scripts
-miscellaneous parsing scripts and plotting functions
+
+Miscellaneous parsing scripts and plotting functions to help with downstream data processing & analysis.
